@@ -13,14 +13,16 @@ final class Html
     {
         $xpath = $this->buildXPathInstance($html);
 
+        $componentNodes = $xpath->evaluate('(//div[' . xpath_html_class('component-inner-container') . '])');
+
         return new Status(
             $this->getOverallStatus($xpath),
-            $this->getGitOperationsStatus($xpath),
-            $this->getApiRequestsStatus($xpath),
-            $this->getIssuesPrsDashboardProjectsStatus($xpath),
-            $this->getNotificationsStatus($xpath),
-            $this->getGistsStatus($xpath),
-            $this->getGitHubPagesStatus($xpath),
+            $this->getGitOperationsStatus($componentNodes),
+            $this->getApiRequestsStatus($componentNodes),
+            $this->getIssuesPrsDashboardProjectsStatus($componentNodes),
+            $this->getNotificationsStatus($componentNodes),
+            $this->getGistsStatus($componentNodes),
+            $this->getGitHubPagesStatus($componentNodes),
         );
     }
 
@@ -37,81 +39,68 @@ final class Html
         $statusElements = $xpath->evaluate('//div[' . xpath_html_class('page-status') . ']/span[' . xpath_html_class('status') . ']');
 
         if ($statusElements->length !== 1) {
+            return $this->getIncidentStatus($xpath);
+        }
+
+        return trim($statusElements->item(0)->textContent);
+    }
+
+    private function getIncidentStatus(\DOMXPath $xpath): string
+    {
+        /** @var \DOMNodeList $statusElements */
+        $statusElements = $xpath->evaluate('(//div[' . xpath_html_class('unresolved-incident') . ']/div/a[' . xpath_html_class('actual-title with-ellipsis') . '])[1]');
+
+        if ($statusElements->length !== 1) {
             throw new UnexpectedHtmlFormat('Overall Status');
         }
 
         return trim($statusElements->item(0)->textContent);
     }
 
-    private function getGitOperationsStatus(\DOMXPath $xpath): string
+    private function getComponentStatus(\DOMNodeList $componentNodes, int $index, string $elementName): string
     {
-        /** @var \DOMNodeList $statusElements */
-        $statusElements = $xpath->evaluate('(//span[' . xpath_html_class('component-status') . '])[1]');
+        $componentNode = $componentNodes->item($index);
 
-        if ($statusElements->length !== 1) {
-            throw new UnexpectedHtmlFormat('Git Operations');
+        if ($componentNode === null) {
+            throw new UnexpectedHtmlFormat($elementName);
         }
 
-        return trim($statusElements->item(0)->textContent);
+        $statusNode = $componentNode->getElementsBytagName('span')->item(2);
+
+        if ($statusNode === null) {
+            throw new UnexpectedHtmlFormat($elementName);
+        }
+
+        return trim($statusNode->textContent);
     }
 
-    private function getApiRequestsStatus(\DOMXPath $xpath): string
+    private function getGitOperationsStatus(\DOMNodeList $componentNodes): string
     {
-        /** @var \DOMNodeList $statusElements */
-        $statusElements = $xpath->evaluate('(//span[' . xpath_html_class('component-status') . '])[2]');
-
-        if ($statusElements->length !== 1) {
-            throw new UnexpectedHtmlFormat('API Requests');
-        }
-
-        return trim($statusElements->item(0)->textContent);
+        return $this->getComponentStatus($componentNodes, 0, 'Git Operations');
     }
 
-    private function getIssuesPrsDashboardProjectsStatus(\DOMXPath $xpath): string
+    private function getApiRequestsStatus(\DOMNodeList $componentNodes): string
     {
-        /** @var \DOMNodeList $statusElements */
-        $statusElements = $xpath->evaluate('(//span[' . xpath_html_class('component-status') . '])[3]');
-
-        if ($statusElements->length !== 1) {
-            throw new UnexpectedHtmlFormat('Issues, PRs, Dashboard, Projects');
-        }
-
-        return trim($statusElements->item(0)->textContent);
+        return $this->getComponentStatus($componentNodes, 1, 'API Requests');
     }
 
-    private function getNotificationsStatus(\DOMXPath $xpath): string
+    private function getIssuesPrsDashboardProjectsStatus(\DOMNodeList $componentNodes): string
     {
-        /** @var \DOMNodeList $statusElements */
-        $statusElements = $xpath->evaluate('(//span[' . xpath_html_class('component-status') . '])[4]');
-
-        if ($statusElements->length !== 1) {
-            throw new UnexpectedHtmlFormat('Notifications');
-        }
-
-        return trim($statusElements->item(0)->textContent);
+        return $this->getComponentStatus($componentNodes, 2, 'Issues, PRs, Dashboard, Projects');
     }
 
-    private function getGistsStatus(\DOMXPath $xpath): string
+    private function getNotificationsStatus(\DOMNodeList $componentNodes): string
     {
-        /** @var \DOMNodeList $statusElements */
-        $statusElements = $xpath->evaluate('(//span[' . xpath_html_class('component-status') . '])[5]');
-
-        if ($statusElements->length !== 1) {
-            throw new UnexpectedHtmlFormat('Gists');
-        }
-
-        return trim($statusElements->item(0)->textContent);
+        return $this->getComponentStatus($componentNodes, 4, 'Notifications');
     }
 
-    private function getGitHubPagesStatus(\DOMXPath $xpath): string
+    private function getGistsStatus(\DOMNodeList $componentNodes): string
     {
-        /** @var \DOMNodeList $statusElements */
-        $statusElements = $xpath->evaluate('(//span[' . xpath_html_class('component-status') . '])[6]');
+        return $this->getComponentStatus($componentNodes, 5, 'Gists');
+    }
 
-        if ($statusElements->length !== 1) {
-            throw new UnexpectedHtmlFormat('GitHub Pages');
-        }
-
-        return trim($statusElements->item(0)->textContent);
+    private function getGitHubPagesStatus(\DOMNodeList $componentNodes): string
+    {
+        return $this->getComponentStatus($componentNodes, 6, 'GitHub Pages');
     }
 }
