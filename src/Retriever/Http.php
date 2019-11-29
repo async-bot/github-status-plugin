@@ -2,9 +2,8 @@
 
 namespace AsyncBot\Plugin\GitHubStatus\Retriever;
 
-use Amp\Http\Client\Client;
-use Amp\Http\Client\Response;
 use Amp\Promise;
+use AsyncBot\Core\Http\Client;
 use AsyncBot\Plugin\GitHubStatus\Event\Data\Status;
 use AsyncBot\Plugin\GitHubStatus\Parser\Html as Parser;
 use function Amp\call;
@@ -27,10 +26,10 @@ final class Http implements Retriever
     public function retrieve(): Promise
     {
         return call(function () {
-            /** @var Response $response */
-            $response = yield $this->httpClient->request('https://www.githubstatus.com');
+            /** @var \DOMDocument $dom */
+            $dom = yield $this->httpClient->requestHtml('https://www.githubstatus.com');
 
-            return $this->statusParser->parse(yield $response->getBody()->buffer());
+            return $this->statusParser->parse($dom);
         });
     }
 }

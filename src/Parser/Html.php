@@ -4,14 +4,13 @@ namespace AsyncBot\Plugin\GitHubStatus\Parser;
 
 use AsyncBot\Plugin\GitHubStatus\Event\Data\Status;
 use AsyncBot\Plugin\GitHubStatus\Exception\UnexpectedHtmlFormat;
-use function Room11\DOMUtils\domdocument_load_html;
 use function Room11\DOMUtils\xpath_html_class;
 
 final class Html
 {
-    public function parse(string $html): Status
+    public function parse(\DOMDocument $dom): Status
     {
-        $xpath = $this->buildXPathInstance($html);
+        $xpath = new \DOMXPath($dom);
 
         $componentNodes = $xpath->evaluate('(//div[' . xpath_html_class('component-inner-container') . '])');
 
@@ -24,13 +23,6 @@ final class Html
             $this->getGistsStatus($componentNodes),
             $this->getGitHubPagesStatus($componentNodes),
         );
-    }
-
-    private function buildXPathInstance(string $html): \DOMXPath
-    {
-        $dom = domdocument_load_html($html);
-
-        return new \DOMXPath($dom);
     }
 
     private function getOverallStatus(\DOMXPath $xpath): string
@@ -65,7 +57,7 @@ final class Html
             throw new UnexpectedHtmlFormat($elementName);
         }
 
-        $statusNode = $componentNode->getElementsBytagName('span')->item(2);
+        $statusNode = $componentNode->getElementsByTagName('span')->item(2);
 
         if ($statusNode === null) {
             throw new UnexpectedHtmlFormat($elementName);

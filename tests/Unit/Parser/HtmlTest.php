@@ -7,24 +7,26 @@ use AsyncBot\Plugin\GitHubStatus\Event\Data\Status;
 use AsyncBot\Plugin\GitHubStatus\Exception\UnexpectedHtmlFormat;
 use AsyncBot\Plugin\GitHubStatus\Parser\Html;
 use PHPUnit\Framework\TestCase;
+use function Room11\DOMUtils\domdocument_load_html;
 
 final class HtmlTest extends TestCase
 {
+    private function getTestDataDom(string $filename): \DOMDocument
+    {
+        return domdocument_load_html(file_get_contents(TEST_DATA_DIR . $filename));
+    }
+
     public function testParseThrowsWhenGlobalStatusElementCanNotBeFound(): void
     {
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "Overall Status" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-overall-status-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-overall-status-element.html'));
     }
 
     public function testParseReturnsCorrectGlobalStatus(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/valid.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertSame('All Systems Operational', $status->getOverallStatus());
@@ -35,9 +37,7 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "Git Operations" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-git-operations-component-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-git-operations-component-element.html'));
     }
 
     public function testParseThrowsWhenGitOperationsStatusElementCanNotBeFound(): void
@@ -45,16 +45,12 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "Git Operations" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-git-operations-status-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-git-operations-status-element.html'));
     }
 
     public function testParseReturnsCorrectGitOperationsStatus(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/valid.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertSame('Operational', $status->getGitOperationsStatus());
@@ -65,9 +61,7 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "API Requests" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-api-requests-component-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-api-requests-component-element.html'));
     }
 
     public function testParseThrowsWhenApiRequestsStatusElementCanNotBeFound(): void
@@ -75,16 +69,12 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "API Requests" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-api-requests-status-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-api-requests-status-element.html'));
     }
 
     public function testParseReturnsCorrectApiRequestsStatus(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/valid.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertSame('Operational', $status->getApiRequestsStatus());
@@ -96,7 +86,7 @@ final class HtmlTest extends TestCase
         $this->expectExceptionMessage('Could not find the "Issues, PRs, Dashboard, Projects" element on the page');
 
         (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-issues-prs-dashboard-projects-component-element.html'))
+            ->parse($this->getTestDataDom('/ResponseHtml/missing-issues-prs-dashboard-projects-component-element.html'))
         ;
     }
 
@@ -106,15 +96,13 @@ final class HtmlTest extends TestCase
         $this->expectExceptionMessage('Could not find the "Issues, PRs, Dashboard, Projects" element on the page');
 
         (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-issues-prs-dashboard-projects-status-element.html'))
+            ->parse($this->getTestDataDom('/ResponseHtml/missing-issues-prs-dashboard-projects-status-element.html'))
         ;
     }
 
     public function testParseReturnsCorrectIssuesPrsDashboardProjectsStatus(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/valid.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertSame('Operational', $status->getIssuesPrsDashboardProjectsStatus());
@@ -125,9 +113,7 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "Notifications" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-notifications-component-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-notifications-component-element.html'));
     }
 
     public function testParseThrowsWhenNotificationsStatusElementCanNotBeFound(): void
@@ -135,16 +121,12 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "Notifications" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-notifications-status-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-notifications-status-element.html'));
     }
 
     public function testParseReturnsCorrectNotificationsStatus(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/valid.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertSame('Operational', $status->getNotificationsStatus());
@@ -155,9 +137,7 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "Gists" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-gists-component-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-gists-component-element.html'));
     }
 
     public function testParseThrowsWhenGistsStatusElementCanNotBeFound(): void
@@ -165,16 +145,12 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "Gists" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-gists-status-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-gists-status-element.html'));
     }
 
     public function testParseReturnsCorrectGistsStatus(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/valid.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertSame('Operational', $status->getGistsStatus());
@@ -185,9 +161,7 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "GitHub Pages" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-github-pages-component-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-github-pages-component-element.html'));
     }
 
     public function testParseThrowsWhenGitHubPagesStatusElementCanNotBeFound(): void
@@ -195,16 +169,12 @@ final class HtmlTest extends TestCase
         $this->expectException(UnexpectedHtmlFormat::class);
         $this->expectExceptionMessage('Could not find the "GitHub Pages" element on the page');
 
-        (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/missing-github-pages-status-element.html'))
-        ;
+        (new Html())->parse($this->getTestDataDom('/ResponseHtml/missing-github-pages-status-element.html'));
     }
 
     public function testParseReturnsCorrectGitHubPagesStatus(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/valid.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertSame('Operational', $status->getGitHubPagesStatus());
@@ -212,9 +182,7 @@ final class HtmlTest extends TestCase
 
     public function testParseReturnsCorrectStatusWhenServiceIsPartiallyDegraded(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/partially-degraded-service.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/partially-degraded-service.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertTrue($status->hasActiveIncident());
@@ -231,9 +199,7 @@ final class HtmlTest extends TestCase
 
     public function testParseReturnCorrectStatusOnIncident(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/incident.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/incident.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertTrue($status->hasActiveIncident());
@@ -256,9 +222,7 @@ final class HtmlTest extends TestCase
 
     public function testParseReturnCorrectStatusOnIncidentWithAnUpdate(): void
     {
-        $status = (new Html())
-            ->parse(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/incident-with-update.html'))
-        ;
+        $status = (new Html())->parse($this->getTestDataDom('/ResponseHtml/incident-with-update.html'));
 
         $this->assertInstanceOf(Status::class, $status);
         $this->assertTrue($status->hasActiveIncident());

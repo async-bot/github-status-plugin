@@ -2,7 +2,8 @@
 
 namespace AsyncBot\Plugin\GitHubStatusTest\Unit\Retriever;
 
-use Amp\Http\Client\Client;
+use Amp\Http\Client\HttpClientBuilder;
+use AsyncBot\Core\Http\Client;
 use AsyncBot\Plugin\GitHubStatus\Event\Data\Status;
 use AsyncBot\Plugin\GitHubStatus\Parser\Html as Parser;
 use AsyncBot\Plugin\GitHubStatus\Retriever\Http;
@@ -14,8 +15,11 @@ final class HttpTest extends TestCase
 {
     public function testRetrieveReturnNewStatus(): void
     {
-        $httpClient = new Client();
-        $httpClient->addApplicationInterceptor(new MockResponseInterceptor(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html')));
+        $httpClient = new Client(
+            (new HttpClientBuilder)->intercept(
+                new MockResponseInterceptor(file_get_contents(TEST_DATA_DIR . '/ResponseHtml/valid.html')),
+            )->build(),
+        );
 
         $status = wait((new Http($httpClient, new Parser()))->retrieve());
 
