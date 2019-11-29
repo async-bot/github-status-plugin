@@ -16,7 +16,6 @@
         "ext-dom": "*",
         "ext-libxml": "*",
         "amphp/amp": "^2.2.0",
-        "amphp/http-client": "^v4.0.0-rc4",
         "amphp/log": "^1.0",
         "async-bot/core": "dev-master",
         "room11/dom-utils": "^1.1"

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b359ce087241a04fb2a18e8d3567e22e",
+    "content-hash": "c5e18a3513a6fb45a04e4e5d0f87a429",
     "packages": [
         {
             "name": "amphp/amp",
@@ -144,22 +144,28 @@
         },
         {
             "name": "amphp/cache",
-            "version": "v1.2.1",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/cache.git",
-                "reference": "884c102a84fdda3eac71746878d55312319550f6"
+                "reference": "14d9fa01a2518eda31b10a421660b41a55249736"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/cache/zipball/884c102a84fdda3eac71746878d55312319550f6",
-                "reference": "884c102a84fdda3eac71746878d55312319550f6",
+                "url": "https://api.github.com/repos/amphp/cache/zipball/14d9fa01a2518eda31b10a421660b41a55249736",
+                "reference": "14d9fa01a2518eda31b10a421660b41a55249736",
                 "shasum": ""
             },
             "require": {
-                "amphp/amp": "^2"
+                "amphp/amp": "^2",
+                "amphp/sync": "^1.2",
+                "php": ">=7.1"
+            },
+            "conflict": {
+                "amphp/file": "<0.2 || >=2"
             },
             "require-dev": {
+                "amphp/file": "^1.0",
                 "amphp/php-cs-fixer-config": "dev-master",
                 "amphp/phpunit-util": "^1",
                 "phpunit/phpunit": "^6 | ^7 | ^8"
@@ -186,7 +192,7 @@
             ],
             "description": "A promise-aware caching API for Amp.",
             "homepage": "https://github.com/amphp/cache",
-            "time": "2019-09-21T08:52:12+00:00"
+            "time": "2019-11-29T18:47:04+00:00"
         },
         {
             "name": "amphp/dns",
@@ -435,16 +441,16 @@
         },
         {
             "name": "amphp/http-client",
-            "version": "v4.0.0-rc9",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-client.git",
-                "reference": "00498c20942a028ae0d8f42ea330383baf95885e"
+                "reference": "52762dc42d494921a78eaa0a491372302799e5c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-client/zipball/00498c20942a028ae0d8f42ea330383baf95885e",
-                "reference": "00498c20942a028ae0d8f42ea330383baf95885e",
+                "url": "https://api.github.com/repos/amphp/http-client/zipball/52762dc42d494921a78eaa0a491372302799e5c6",
+                "reference": "52762dc42d494921a78eaa0a491372302799e5c6",
                 "shasum": ""
             },
             "require": {
@@ -508,7 +514,7 @@
                 "parallel",
                 "rest"
             ],
-            "time": "2019-11-20T18:23:14+00:00"
+            "time": "2019-11-22T21:25:21+00:00"
         },
         {
             "name": "amphp/log",
@@ -911,19 +917,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/async-bot/core.git",
-                "reference": "02f93d20a018e53a958abba1b2c70fef4c3f2b03"
+                "reference": "24b037a8801fb3e9307c1c5deb73267b3e909ae3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/async-bot/core/zipball/02f93d20a018e53a958abba1b2c70fef4c3f2b03",
-                "reference": "02f93d20a018e53a958abba1b2c70fef4c3f2b03",
+                "url": "https://api.github.com/repos/async-bot/core/zipball/24b037a8801fb3e9307c1c5deb73267b3e909ae3",
+                "reference": "24b037a8801fb3e9307c1c5deb73267b3e909ae3",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2.2.0",
                 "amphp/byte-stream": "^1.6",
                 "amphp/file": "^1.0",
-                "amphp/http-client": "^v4.0.0-rc4",
+                "amphp/http-client": "dev-master as 4.0-rc9",
                 "amphp/log": "^1.0",
                 "daverandom/exceptional-json": "^1.0",
                 "ext-dom": "*",
@@ -957,7 +963,7 @@
                 }
             ],
             "description": "Shared code for the Async Bot project",
-            "time": "2019-11-29T10:14:45+00:00"
+            "time": "2019-11-29T20:38:34+00:00"
         },
         {
             "name": "daverandom/exceptional-json",
